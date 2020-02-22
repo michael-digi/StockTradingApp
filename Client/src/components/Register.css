@@ -1,0 +1,22 @@
+
+#register-container {
+	margin-top: 5%;
+}
+
+html, body, #root {
+  height: 100%;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: repeat;
+  background-size: cover;
+  background-image: url('../images/background4.jpg');
+}
+
+#app {
+  height: 100%;
+  
+}
+
+.card {
+	padding: 5%;
+}
