@@ -1,6 +1,10 @@
-
 #register-container {
 	margin-top: 5%;
+	margin-bottom: 10%;
+}
+
+.card {
+  padding: 5%;
 }
 
 html, body, #root {
@@ -9,7 +13,7 @@ html, body, #root {
   background-position: center;
   background-repeat: repeat;
   background-size: cover;
-  background-image: url('../images/background4.jpg');
+  background-image: url('../../images/background4.jpg');
 }
 
 #app {
@@ -17,6 +21,4 @@ html, body, #root {
   
 }
 
-.card {
-	padding: 5%;
-}
+

@@ -1,13 +1,13 @@
 require('dotenv').config();
-const express = require('express');
-const path = require('path');
+const express = require('express');;
 const app = express();
-const indexRouter = require('./routes')
+const path = require('path');
 const cors = require('cors');
+const { userRoutes, sessionRoutes, stockRoutes } = require('./routes/index'); 
+
 const mongoose = require('mongoose');
 const session = require('express-session');
 const connectStore = require('connect-mongo');
-
 const MongoStore = connectStore(session);
 
 app.disable('x-powered-by')
@@ -20,7 +20,8 @@ db.on('error', console.error.bind(console, 'connection error: '))
 
 const store = new MongoStore({
     mongooseConnection: db,
-    collection: 'session'
+    collection: 'session',
+    //ttl: parseInt(process.env.SESS_LIFETIME) / 1000
   })
 
 store.on("error", function(error) {
@@ -30,11 +31,13 @@ store.on("error", function(error) {
 app.use(session({
   name: process.env.SESSION_NAME,
   secret: process.env.SESSION_SECRET,
-  resave: true,
+  resave: false,
   saveUninitialized: false,
   store: store,
   cookie: {
-    sameSite: true
+    sameSite: true,
+    //maxAge: parseInt(process.env.SESS_LIFETIME),
+    secure: process.env.NODE_ENV === 'production'
   }
 }))
 
@@ -43,14 +46,18 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(cors())
 
-app.use(function (req, res, next) {
-  res.locals.currentUser = req.session.userId;
-  console.log(res.locals.currentUser, " this is res.locals.currentUser")
-  next();
-});
+if(process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../../Client/build')));
+  app.get('/', function(req, res) {
+    res.sendFile('index.html', {root: path.join(__dirname, '../../Client/build/')})
+  });
+}
 
-app.use('/', indexRouter);
-
+const apiRouter = express.Router();
+app.use('/api', apiRouter);
+apiRouter.use('/user', userRoutes);
+apiRouter.use('/session', sessionRoutes)
+apiRouter.use('/stocks', stockRoutes)
 
 // catch 404 and forward to error handler
 

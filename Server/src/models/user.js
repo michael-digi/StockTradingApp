@@ -7,6 +7,10 @@ const UserSchema = new mongoose.Schema({
       required: true,
       trim: true
     },
+    balance: {
+      type: Number,
+      default: 5000
+    },
     firstName: {
       type: String,
       required: true,
@@ -22,29 +26,29 @@ const UserSchema = new mongoose.Schema({
       required: true
     },
     stocks: {
-      type: Map
+      type: Map,
+      default: {}
     }
 });
 // authenticate input against database documents
-UserSchema.statics.authenticate = function(email, password, callback) {
-  User.findOne({ email: email })
-      .exec(function (error, user) {
-        if (error) {
-          return callback(error);
-        } else if ( !user ) {
-          const err = new Error('User not found.');
-          err.status = 401;
-          return callback(err);
-        }
-        bcrypt.compare(password, user.password , function(error, result) {
-          if (result === true) {
-            return callback(null, user);
-          } else {
-            return callback();
-          }
-        })
-      });
-}
+// UserSchema.statics.authenticate = (email, password) => {
+//   User.findOne({ email: email })
+//       .exec(function (user, error) {
+//         if (error) {
+//           return res.send(error);
+//         } else if ( !user ) {
+//           const err = new Error('User not found.');
+//           err.status = 401;
+//           return res.send(err);
+//         }})
+//         bcrypt.compare(password, user.password) = (error, result) => {
+//           if (result === true) {
+//             return res.send(user);
+//           } else {
+//             return res.send("Invalid Username and Password");
+//           }
+//         }
+//     }
 // hash password before saving to database
 UserSchema.pre('save', function(next) {
   const user = this;
@@ -56,5 +60,6 @@ UserSchema.pre('save', function(next) {
     next();
   })
 });
+
 const User = mongoose.model('User', UserSchema);
 module.exports = User;
