@@ -38,7 +38,7 @@ export const purchaseStock = stock => {
   }
 }
 
-export const loadUserStockInfo = userStockInfo => {
+export const changeUserStockInfo = userStockInfo => {
   return {
     type: PURCHASE_STOCK,
     payload: userStockInfo

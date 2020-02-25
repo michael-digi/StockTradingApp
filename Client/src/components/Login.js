@@ -29,7 +29,10 @@ class Login extends React.Component  {
           email: this.state.email,
           password: this.state.password
     })
-    .then(res => console.log(res))
+    .then(res => {
+       this.props.receiveCurrentUser(res.data)
+       localStorage.setItem('logged in',res.data)}
+       )
   }
 
   render() {

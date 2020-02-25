@@ -11,11 +11,10 @@ checkSession = (req, res) => {
 
 info = (req, res) => {
   ticker = req.query.ticker
-  console.log(req.query, "this is stock")
   axios.get(`https://cloud.iexapis.com/stable/stock/${ticker}/quote?token=` + process.env.IEX_SECRET)
     .then(response => {
-      console.log(response)
-      return res.send( {symbol: response.data.symbol, 
+      console.log(response.data)
+      return res.send( {ticker: response.data.symbol, 
                         companyName: response.data.companyName, 
                         open: response.data.open, 
                         close: response.data.close, 
@@ -55,8 +54,7 @@ login = (req, res) => {
 
 logout = (req, res) => {
   let { userId, firstName, cookie } = req.session
-  
-  if (userId) {
+  if (userId, firstName, cookie) {
     userId = null;
     firstName = null;
     cookie = null
@@ -64,7 +62,7 @@ logout = (req, res) => {
       if (err) {
         return(err)
       }
-      res.clearCookie(process.env.SESSION_NAME);
+      res.clearCookie(process.env.SESSION_NAME, {path: '/'}).status(200).send('ok');
     })
   }
   else {
@@ -102,6 +100,7 @@ registerUser = (req, res) => {
         else {
           User.create(userData)
             .then((user, error) => {
+              console.log(req.session.cookie)
               req.session.userId = user._id;
               req.session.firstName = user.firstName
               res.send({userId: req.session.userId, firstName: req.session.firstName}) })

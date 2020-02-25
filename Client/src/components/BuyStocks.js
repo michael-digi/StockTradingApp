@@ -18,7 +18,6 @@ class BuyStocks extends React.Component {
   state = {
     ticker: '',
     shares: '',
-    cash: 5000,
     modalShow: false,
   }
 
@@ -47,11 +46,18 @@ class BuyStocks extends React.Component {
       }
     })
     .then(res => {
-      this.props.purchaseStock({ticker: res.data.symbol, 
-                     price: res.data.latestPrice, 
-                     shares: this.state.shares})
-      if (res.data.symbol && res.data.latestPrice && this.state.shares) {
+      console.log(res.data)
+      const total = (parseFloat(this.state.shares) * 
+                     parseFloat(res.data.latestPrice)).toFixed(2)
+      res.data['shares'] = this.state.shares
+      res.data['total'] = total
+      this.props.purchaseStock(res.data)
+      if (res.data.ticker && res.data.latestPrice && this.state.shares) {
         this.handleShow()
+        this.setState({
+          ticker: '',
+          shares: ''
+       })
       }
       else {
         console.log('Error')
@@ -71,10 +77,10 @@ class BuyStocks extends React.Component {
           </Col>
           <Col sm = {{ span: 3, offset: 1}}>
             <Card>
-            {this.props.userStocks.cash}
+            {this.props.userStocks.cash.toFixed(2)}
               <Card.Body>
+                
                 <Form id = "register-form">
-                  
                   <Form.Group controlId="formBasicEmail">
                     <Form.Label>Ticker</Form.Label>
                     <Form.Control 
@@ -106,6 +112,7 @@ class BuyStocks extends React.Component {
                     Invest
                   </Button>
                 </Form>
+              
               </Card.Body>
             </Card>
           </Col>

@@ -2,19 +2,50 @@ import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import { connect } from 'react-redux';
-import { purchaseStock } from '../actions';
+import { purchaseStock, changeUserStockInfo } from '../actions';
+
 
 
 class BuyModal extends React.Component {
 
+  reset = () => {
+    this.props.purchaseStock({
+      ticker: null, 
+      companyName: null, 
+      open: 0, 
+      close: 0, 
+      latestPrice: 0,
+      previousClose: 0,
+      change: 0,
+      shares: 0,
+      total: 0 })
+  }
+
   closeAndCancel = () => {
     this.props.handleClose();
-    this.props.purchaseStock({ticker: '', 
-                              price: 0, 
-                              shares: 0})}
+  }
+
+  closeAndConfirm = () => {
+    const { userStocks, stock } = this.props
+    userStocks.cash -= stock.total
+    userStocks.transactions.push(stock)
+    console.log(userStocks, "this is userStocks")
+    console.log(stock, "this is stock")
+    if (stock.ticker in userStocks.stocks) {
+      userStocks.stocks[stock.ticker] += parseInt(stock.shares)
+    }
+    else {
+      userStocks.stocks[stock.ticker] = parseInt(stock.shares)
+    }
+    
+    this.props.changeUserStockInfo({
+      userStocks
+    })
+    this.props.handleClose();
+   } 
+  
   checkCanBuy = () => {
-    if ((this.props.stock.price * 
-         this.props.stock.shares).toFixed(2) <= this.props.userStocks.cash){
+    if (this.props.stock.total <= this.props.userStocks.cash){
       return true
     }
     else {
@@ -28,7 +59,9 @@ class BuyModal extends React.Component {
       <div>
         <Modal show={this.props.show} onHide={this.props.handleClose}>
           <Modal.Header closeButton>
-            <Modal.Title>Confirm Investment</Modal.Title>
+            <Modal.Title>
+            {this.checkCanBuy() ? "Confirm Investment" : "Invalid"}
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
 
@@ -36,8 +69,8 @@ class BuyModal extends React.Component {
            `Are you sure you want to buy 
              ${this.props.stock.shares} shares of 
              ${this.props.stock.ticker} for 
-             $${this.props.stock.price}/share for a total of 
-             $${(this.props.stock.price * this.props.stock.shares).toFixed(2)}?
+             $${this.props.stock.latestPrice}/share for a total of 
+             $${(this.props.stock.latestPrice * this.props.stock.shares).toFixed(2)}?
            `
            : <div>You do not have enough cash to make this purchase</div>
           }
@@ -47,13 +80,12 @@ class BuyModal extends React.Component {
               Cancel
             </Button>
             { this.checkCanBuy() ?
-            <Button variant="primary" onClick={this.props.closeAndConfirm}>
+            <Button variant="primary" onClick={this.closeAndConfirm}>
               Confirm
             </Button> : null
             }
           </Modal.Footer>
         </Modal>
-        {console.log(this.props.stock)}
       </div>
    );
   }
@@ -65,7 +97,8 @@ const mapStateToProps = state => ({
 })
 
 const dispatch = {
-  purchaseStock
+  purchaseStock,
+  changeUserStockInfo
 }
 
 export default connect(mapStateToProps, dispatch)(BuyModal);
