@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import BuyStocks from './BuyStocks';
-import axios from 'axios'
+
 import { purchaseStock, loadUserStockInfo } from '../actions';
 
 class Portfolio extends React.Component {

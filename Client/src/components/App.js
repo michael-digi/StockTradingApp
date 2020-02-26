@@ -2,7 +2,6 @@ import React from 'react';
 import NavigationBar from './NavigationBar';
 import Register from './Register';
 import Login from './Login';
-import BuyStocks from './BuyStocks';
 import Portfolio from './Portfolio';
 import Transactions from './Transactions';
 import { connect } from 'react-redux';
@@ -21,7 +20,6 @@ class App extends React.Component {
   componentDidMount() {
     let loadedUserInfo = {};
     let tickers, entries, data;
-    console.log("WHEEEEEEE")
     this.props.switchLoading(true)
     axios.get('/api/user/findUser', {
       params:  {
@@ -29,7 +27,6 @@ class App extends React.Component {
       }
     }).then(res => {
       console.log(res, " res1")
-        let cash = res.data.cash
         loadedUserInfo['cash'] = (res.data.cash)
         loadedUserInfo['transactions'] = res.data.transactions
         loadedUserInfo['stocks'] = res.data.stocks

@@ -68,6 +68,7 @@ findUser = (req, res) => {
   User.findOne({ _id: req.query.id })
     .then(user => {
       if (user) {
+      user.password = ''
       res.send(user)}
     })
 }

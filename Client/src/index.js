@@ -17,13 +17,12 @@ import axios from 'axios';
           id:user.userId
         }
       }).then(res => {
-        console.log(res)
+        console.log()
 
       })
         let preloadedState = {
           session: user
         }
-        console.log(preloadedState.session)
       const store = configureStore(preloadedState);
       ReactDOM.render( 
         <Provider store = {store}>

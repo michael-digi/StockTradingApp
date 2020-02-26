@@ -10,7 +10,6 @@ class Transactions extends React.Component {
 
 renderRows = () => {
     let rows = []
-    let net;
     let { transactions }  = this.props.userStocks
     for (let i = 0; i < transactions.length; i++) {
       rows.push(

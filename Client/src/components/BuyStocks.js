@@ -7,7 +7,6 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import DataTable from './DataTable';
-import Loading from './Loading';
 import './css/Register.css';
 import axios from 'axios'
 import BuyModal from './BuyModal'

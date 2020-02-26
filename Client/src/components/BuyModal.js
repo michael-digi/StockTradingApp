@@ -35,7 +35,6 @@ class BuyModal extends React.Component {
     const { stock } = this.props
     stock['symbol'] = stock.ticker
 
-    const { userStocks } = this.props
     const { userId, firstName } = this.props.session
 
     const today = new Date();
