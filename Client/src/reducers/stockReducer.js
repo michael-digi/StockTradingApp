@@ -1,5 +1,6 @@
 import { PURCHASE_STOCK } from '../actions/types'
 
+// holds the stock info as user prepares to buy
 const _STOCK = { ticker:null, 
                  companyName: null, 
                  open: 0, 

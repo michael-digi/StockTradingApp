@@ -5,12 +5,33 @@ import Col from 'react-bootstrap/Col';
 import './css/Transaction.css';
 import { loadUserStockInfo } from '../actions'
 import { connect } from 'react-redux';
+import axios from 'axios';
+
 
 class Transactions extends React.Component {
+  state = {
+    loggedIn: Boolean(localStorage.getItem('userId')),
+    cash: '',
+    transactions: '',
+    stocks: ''
+  }
 
+  componentDidMount() {
+    axios.get('/api/user/findUser', {
+      params:  {
+        id: String(localStorage.userId)
+      }
+    }).then(res => {
+        this.setState({
+          cash:res.data.cash,
+          transactions: res.data.transactions,
+          stocks: res.data.stocks
+        })
+  })}
+ 
 renderRows = () => {
     let rows = []
-    let { transactions }  = this.props.userStocks
+    let { transactions }  = this.state
     for (let i = 0; i < transactions.length; i++) {
       rows.push(
         <tr key = {i}>
@@ -43,7 +64,7 @@ renderRows = () => {
               </thead>
               <tbody>
               {console.log(this.props.userStocks.stocks)}
-      {this.props.session.userId ?
+      {this.state.loggedIn ?
       this.renderRows() : null}
               </tbody>
             </table>

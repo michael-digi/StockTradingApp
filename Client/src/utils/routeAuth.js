@@ -2,10 +2,13 @@ import React from "react";
 import { connect } from "react-redux";
 import { Redirect, Route, withRouter } from "react-router-dom";
 
+
+const isLoggedIn = Boolean(localStorage.getItem('userId'))
+
 const mapStateToProps = ({ session: { userId} }) => ({
   loggedIn: Boolean(userId)
-});
 
+});
 // export const checkLoggedIn = () => {
 //   let user;
 //   axios.get('api/session/check')
@@ -26,8 +29,8 @@ const Auth = ({ loggedIn, path, component: Component }) => (
   <Route
     path={path}
     render={props => (
-      loggedIn ?
-      <Redirect to='/transactions' /> :
+      isLoggedIn ?
+      <Redirect to='/portfolio' /> :
       <Component {...props} />
     )}
   />
@@ -37,7 +40,7 @@ const Protected = ({ loggedIn, path, component: Component }) => (
   <Route
     path={path}
     render={props => (
-      loggedIn ? 
+      isLoggedIn ? 
       <Component {...props} /> :
       <Redirect to='/login' />
     )}

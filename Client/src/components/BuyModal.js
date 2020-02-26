@@ -3,16 +3,15 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import { purchaseStock, loadUserStockInfo } from '../actions';
+import { purchaseStock, 
+         // loadUserStockInfo 
+       } from '../actions';
 
 
 
 class BuyModal extends React.Component {
 
-  state = {
-    newStock: false
-  }
-
+//resets the current stock reducer to null if the user cancels
   reset = () => {
     this.props.purchaseStock({
       ticker: null, 
@@ -25,17 +24,18 @@ class BuyModal extends React.Component {
       shares: 0,
       total: 0 })
   }
-
+// activated when the user hits "cancel" on the popup modal
   closeAndCancel = () => {
     this.props.handleClose();
   }
-
+// activated when the user hits "confirm" on the popup modal.
+// all the lines before the axios post are to prepare the information for an organized
+// request to our backend to make it easier to parse and insert into the database.
+// this includes making a date() item, calculating the cost to subtract from user cash etc
   closeAndConfirm = () => {
-
-    const { stock } = this.props
+    let { stock } = this.props
     stock['symbol'] = stock.ticker
-
-    const { userId, firstName } = this.props.session
+    const userId = localStorage.getItem('userId')
 
     const today = new Date();
     const dd = today.getDate();
@@ -43,7 +43,7 @@ class BuyModal extends React.Component {
     const yyyy = today.getFullYear()
    
     const databaseEntry = {
-      user: [userId, firstName],
+      user: [userId],
       transaction: ['BUY',
                     stock.ticker, 
                     stock.shares, 
@@ -53,7 +53,7 @@ class BuyModal extends React.Component {
               shares: stock.shares},
       cost: (stock.shares * stock.latestPrice).toFixed(2)
     }
-
+    // sending to our backend to be inserted into mongo
     axios.post('/api/user/updateportfolio', {
         entry: databaseEntry
     }).then(() => {
@@ -63,9 +63,9 @@ class BuyModal extends React.Component {
 
     this.props.handleClose();
    } 
-  
+  //check if user has enough money to make this purchase
   checkCanBuy = () => {
-    if (this.props.stock.total <= this.props.userStocks.cash){
+    if (this.props.stock.total <= this.props.cash){
       return true
     }
     else {
@@ -74,7 +74,7 @@ class BuyModal extends React.Component {
   }
   
   render() {
-  
+  //Modal that opens and is rendered on the condition of the user having enough funds
     return (
       <div>
         <Modal show={this.props.show} onHide={this.props.handleClose}>
@@ -84,7 +84,6 @@ class BuyModal extends React.Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-
           { this.checkCanBuy() ? 
            `Are you sure you want to buy 
              ${this.props.stock.shares} shares of 
@@ -110,16 +109,16 @@ class BuyModal extends React.Component {
    );
   }
 }
-
+// to bring in stock info from the reducer
 const mapStateToProps = state => ({
-  stock: state.stock,
-  userStocks: state.userStocks,
-  session: state.session
+  stock: state.stock
+  //userStocks: state.userStocks,
+  // session: state.session
 })
 
 const dispatch = {
-  purchaseStock,
-  loadUserStockInfo
+  purchaseStock
+  // loadUserStockInfo
 }
 
 export default connect(mapStateToProps, dispatch)(BuyModal);

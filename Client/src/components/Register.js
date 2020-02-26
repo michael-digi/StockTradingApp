@@ -5,18 +5,27 @@ import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { validateEmail, validatePassword } from './componentHelpers'
 import './css/Register.css';
 import axios from 'axios'
 import { connect } from 'react-redux';
 import { receiveCurrentUser, logoutCurrentUser } from '../actions';
 
+// this allows the user to register. It will validate the correct email with a regex,
+// and will do the same for a password (at least 8 characters, at least one letter and one number)
+// it will then check to see if the user is already in the database but email and return a conflict
+// if so.
 
 class Register extends React.Component  {
   state = {
     email: '',
     password: '',
     firstName: '',
-    lastName: ''
+    lastName: '',
+    error: '',
+    passwordError: '',
+    emailError: '',
+    nameError: ''
   }
 
   handleChange = (event) =>  {
@@ -26,31 +35,55 @@ class Register extends React.Component  {
     })
   }
 
-  checkSession = async () => {
-    axios.get('api/session/check')
-      .then(res => {
-        if (res.data.userId) {
-          console.log(res.data)
-        }
-        else {
-          console.log("nuthin")
-        }
-      })
-  }
-
-  
   register = () => {
-      axios.post('api/user/register', {
+    let validEmail = validateEmail(this.state.email)
+    let validPassword = validatePassword(this.state.password)
+    
+    if (validEmail === false) {
+      this.setState({
+        emailError: 'Please enter a valid email'
+      })
+      return
+    }
+    if (validPassword === false) {
+      this.setState({
+        passwordError: 'Password must be at least 8 characters and contain' +
+                       'at least one letter, one number, and one special character'
+      })
+      return
+    }
+    if (!this.state.firstName || !this.state.lastName) {
+      this.setState({
+        nameError: 'Please enter your full name'
+      })
+      return
+    }
+    this.setState({
+        emailError: '',
+        passwordError: '',
+        nameError: ''
+      })
+    axios.post('api/user/register', {
           email: this.state.email,
           password: this.state.password,
           firstName: this.state.firstName,
           lastName: this.state.lastName
       })
        .then(res =>  {
-         console.log(res.data)
-         this.props.receiveCurrentUser(res.data)}
+         this.setState({
+           emailError: '',
+           passwordError: ''
+         })
+         this.props.receiveCurrentUser(res.data)
+         localStorage.setItem('userId', res.data.userId)
+         window.location.reload()
+       }
          )
-       .catch(error => console.log(error.response))
+       .catch(() => {
+         this.setState({
+           emailError: "This user already exists"
+         })
+       })
     }
 
   render() {
@@ -59,9 +92,11 @@ class Register extends React.Component  {
         <Row>
           <Col sm = {{ span: 6, offset: 3 }}>
             <Card>
+            <h2> Sign Up </h2>
               <Card.Body>
                 <Form id = "register-form">
                   <Form.Group controlId="formBasicEmail">
+                  <div style = {{color: 'red'}} >{this.state.emailError}</div>
                     <Form.Label>Email address</Form.Label>
                     <Form.Control 
                       type="email" 
@@ -75,6 +110,7 @@ class Register extends React.Component  {
                   </Form.Group>
 
                   <Form.Group controlId="formBasicFirstName">
+                  <div style = {{color: 'red'}} >{this.state.nameError}</div>
                     <Form.Label>First Name</Form.Label>
                     <Form.Control 
                       type="text" 
@@ -95,6 +131,7 @@ class Register extends React.Component  {
                   </Form.Group>
 
                   <Form.Group controlId="formBasicPassword">
+                  <div style = {{color: 'red'}} >{this.state.passwordError}</div>
                     <Form.Label>Password</Form.Label>
                     <Form.Control 
                       type="password" 
@@ -115,7 +152,6 @@ class Register extends React.Component  {
             </Card>
           </Col>
         </Row>
-        {console.log(this.props)}
       </Container>
     );
   }

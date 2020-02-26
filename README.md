@@ -1,4 +1,71 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# The Exchange (Stock Trading App)
+
+[The Exchange](https://young-sands-22656.herokuapp.com/login)
+
+This app allows a user to query real-time stock data and look at their portfolio and previous transactions. A user must sign-up before being able to purchase stocks.
+
+## Motivation
+
+This is a sample app that utilizes the MERN stack (**MongoDB, Express, React, Node**) to create a user interface that allows a user to sign-up, login, and begin "buying" stocks with fake currency using a real stocks API: [IEX](https://iexcloud.io/docs/api/)
+
+The stocks the user "buys" will be stored in their profile on MongoDB and then queried in order to display the appropriate user data.
+
+## Installation
+
+There are two folders in the root: Client and Server. You must cd into EACH folder and type:
+
+```bash
+npm install
+```
+
+This will download the dependencies. 
+
+Important: In order to start this project locally, you must start each server in a separate terminal.
+
+First, cd into the Client and type:
+```bash
+npm start
+```
+This will start the react server on port 3000
+
+Then, go into the ROOT StockTradingApp folder and type:
+```bash
+nodemon start
+```
+
+You can then visit <http://localhost:3000/login> and see the app.
+
+NOTE: There are several .env variables present in the app, including the SECRET string to the IEX API and MonogDB database. Therefore, the app will not work as these are necessary for the app to run. You can see the app on Heroku here: 
+
+[The Exchange](https://young-sands-22656.herokuapp.com/login)
+## Usage
+
+If you'd like to use this as a boilerplate, you must get your own credentials and make a .env file in the root of this project with the following variables filled:
+```bash
+MONGO = 
+SESSION_SECRET = 
+SESSION_NAME = 
+NODE_ENV = "development"
+IEX_SECRET = ""
+```
+And then follow the installation instructions above.
+## Technologies
+**FrontEnd**: React, Redux, BootStrap
+
+**BackEnd**: Node, Express, Mongoose, bcrypt
+
+**DataBase**: MongoDB using MongoDBAtlas
+
+**API's**: [IEX](https://iexcloud.io/docs/api/) Developer API
+
+**Deployed to**: Heroku at <https://young-sands-22656.herokuapp.com/login>
+
+
+
+## License
+[MIT](https://choosealicense.com/licenses/mit/)
+
+
 
 ## Available Scripts
 
@@ -12,11 +79,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
 ### `npm run build`
 
 Builds the app for production to the `build` folder.<br />
@@ -27,42 +89,9 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+### `nodemon start`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Navigate to root directory of this project and call this to start hot-reload server on [http://localhost:5000](http://localhost:5000)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify

@@ -1,31 +1,30 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import BuyStocks from './BuyStocks';
+import DataTable from './DataTable';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
 
-import { purchaseStock, loadUserStockInfo } from '../actions';
+// the portfolio page which displays the user's stocks with their worth in DataTable, and
+// shows the card that contains the ticker/shares inputs to buy stocks
 
-class Portfolio extends React.Component {
- 
-render() {
-    return (
+function Portfolio() {
+  return (
       <div style = {{height: '100%'}}>
-      <BuyStocks />
+      <Container id = "ticker-container">
+        <Row>
+          <Col sm = {{ span: 8 }}>
+            <DataTable />
+          </Col>
+          <Col sm = {{ span: 3, offset: 1}}>
+           <BuyStocks />
+          </Col>
+        </Row>
+      </Container>
       </div>
     )
   }
-}
-
-const mapStateToProps = state => ({
-  session: state.session,
-  stock: state.stock,
-  userStocks: state.userStocks,
-  loading: state.loading
-})
-
-const actionCreators = {
-  purchaseStock,
-  loadUserStockInfo
-}
 
 
-export default connect(mapStateToProps, actionCreators)(Portfolio);
+
+export default (Portfolio);

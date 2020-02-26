@@ -2,9 +2,8 @@
   "name": "server",
   "version": "0.0.0",
   "private": true,
-  "main": "app.js",
   "scripts": {
-    "start": "node src/app.js",
+    "start": "node Server/src/app.js",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix Client && npm run build --prefix Client"
   },
   "dependencies": {

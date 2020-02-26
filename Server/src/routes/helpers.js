@@ -4,13 +4,17 @@ const mongoose = require('mongoose');
 const axios = require('axios');
 
 
+// check to see if there is a user session on express, for log in
 checkSession = (req, res) => {
   session = req.session
   return res.send(session)
 }
 
+// updates the user's portfolio info in the database, adding transactions, owned stocks
+// deducting cash amount from purchase
 updatePortfolio = async (req, res) => {
   const { user, transaction, stock, cost } = req.body.entry
+
   User.findOne({ _id: user[0] })
     .then((res) => {
       res.cash -= cost
@@ -24,19 +28,14 @@ updatePortfolio = async (req, res) => {
       }
       res.save()
     })
-  //const doc = await User.findOne({ _id: user[0]})
-  //console.log(await User.stocks.exists({_id: user[0]}))
-  //doc.cash -= cost
-  //doc.cash.toFixed(2)
-  //doc.stocks.set(stock.ticker, stock.shares)
-  //await doc.save()
 }
 
+// get request for particular ticker, accessed from the BuyStocks/BuyModal component to display
+// info to user and prepare to save to database
 info = (req, res) => {
   ticker = req.query.ticker
   axios.get(`https://cloud.iexapis.com/stable/stock/${ticker}/quote?token=` + process.env.IEX_SECRET)
     .then(response => {
-      console.log(response.data)
       return res.send( {ticker: response.data.symbol, 
                         companyName: response.data.companyName, 
                         open: response.data.open, 
@@ -49,6 +48,8 @@ info = (req, res) => {
     .catch(error => res.send("Ticker symbol not found"))
 }
 
+// this is for loading current, up to date information about the user's stocks all at once to display
+// in the DataTable component
 batchInfo = (req, res) => {
   tickers = req.query.tickers
   axios.get(`https://cloud.iexapis.com/stable/stock/market/batch?symbols=
@@ -63,18 +64,18 @@ batchInfo = (req, res) => {
     })
 }
 
+// used in several places to find information about a user in the database
 findUser = (req, res) => {
-  console.log(req.query.id, " this is queryid")
   User.findOne({ _id: req.query.id })
     .then(user => {
       if (user) {
       user.password = ''
       res.send(user)}
-    })
+    }).catch(error => res.send("Error"))
 }
 
+// pulls the stock information about the user (types and number of shares)
 findUserStocks = (req, res) => {
-  console.log(req.query.id, " this is queryid")
   User.findOne({ _id: req.query.id })
     .then(user => {
       if (user) {
@@ -82,19 +83,18 @@ findUserStocks = (req, res) => {
     }).catch(error=> console.log("user doesnt have stocks"))
 }
 
+// the login function that verifies that a user exists and then utilizes bcrypt to check
+// submitted password with hashed password
 login = (req, res) => {
   const { email, password } = req.body
-  console.log(email, password, " email and password")
   if (email && password) {
     User.findOne({ email: email })
       .then((user, error) => {
-        console.log(user, " the user")
         if (error || ! user) {
           return res.send("User not found")
         }
         bcrypt.compare(password, user.password)
         .then((result, error) => {
-            console.log(result, " ", error, " result and error")
             if (result === true) {
               req.session.userId = user._id;
               req.session.firstName = user.firstName
@@ -111,6 +111,7 @@ login = (req, res) => {
   }
 }
 
+// destroys user session on the express-server side and logs them out
 logout = (req, res) => {
   let { userId, firstName, cookie } = req.session
   if (userId, firstName, cookie) {
@@ -126,21 +127,15 @@ logout = (req, res) => {
    }
 } 
 
+// registers user, first confirming they have filled out all fields, then checks to see 
+// if there already is a user with this email. If there is, send a Conflict error, but if
+// not, successfully input user to the database initialized with $5000
 registerUser = (req, res) => {
-  console.log(req.body, "this is register")
   if (req.body.email &&
       req.body.firstName && 
       req.body.lastName &&
       req.body.password) {
 
-      // confirm that user typed same password twice
-      // if (req.body.password !== req.body.confirmPassword) {
-      //   const err = new Error('Passwords do not match.');
-      //   err.status = 400;
-      //   return next(err);
-      // }
-
-      // create object with form input
     const userData = {
       email: req.body.email,
       firstName: req.body.firstName,
@@ -156,7 +151,6 @@ registerUser = (req, res) => {
         else {
           User.create(userData)
             .then((user, error) => {
-              console.log(req.session.cookie)
               req.session.userId = user._id;
               req.session.firstName = user.firstName
               res.send({userId: req.session.userId, firstName: req.session.firstName}) })

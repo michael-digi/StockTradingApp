@@ -4,71 +4,21 @@ import Register from './Register';
 import Login from './Login';
 import Portfolio from './Portfolio';
 import Transactions from './Transactions';
-import { connect } from 'react-redux';
-import axios from 'axios';
-import { receiveCurrentUser, 
-         logoutCurrentUser,
-         loadUserStockInfo,
-         switchLoading } from '../actions';
 import './css/Register.css';
 
 import { AuthRoute, ProtectedRoute } from "../utils/routeAuth";
 
-
 class App extends React.Component {
 
-  componentDidMount() {
-    let loadedUserInfo = {};
-    let tickers, entries, data;
-    this.props.switchLoading(true)
-    axios.get('/api/user/findUser', {
-      params:  {
-        id: this.props.session.userId
-      }
-    }).then(res => {
-      console.log(res, " res1")
-        loadedUserInfo['cash'] = (res.data.cash)
-        loadedUserInfo['transactions'] = res.data.transactions
-        loadedUserInfo['stocks'] = res.data.stocks
-        this.props.loadUserStockInfo(loadedUserInfo)
-    }).then(() => {
-    axios.get('/api/user/userStocks', {
-      params: {
-        id: this.props.session.userId
-      }
-    })
-     .then(res => {
-       console.log(res, " res3")
-        data = res.data
-        tickers = Object.keys(res.data)
-        entries = Object.entries(res.data)
-    }).then(() => {
-        axios.get('api/stocks/batchinfo', {
-          params: {
-            tickers: tickers,
-            entries: entries
-          }
-    }).then(res => {
-      console.log(res, " res5")
-         for (let i = 0; i < res.data.length; i++) {
-           (res.data[i]['shares'] = data[res.data[i].symbol])
-         }
-         this.props.loadUserStockInfo({
-           stocks: res.data,
-           transactions: this.props.userStocks.transactions,
-           cash: this.props.userStocks.cash
-         })
-      }).then(() => {
-        this.props.switchLoading(false)
-       })
-       .catch(error => console.log("Please try"))
-    })
-   })
-}
+//The main page of the app. The AuthRoute/ProtectedRoute is defined in utils/authroute.js
+//It checks to see if a user is logged in and redirects them accoridingly
   render() {
     return (
       <div id = "app">
         <NavigationBar />
+        <AuthRoute 
+          path="/home" 
+          exact component={Login} />
         <AuthRoute 
           path="/register" 
           exact component={Register} />
@@ -86,18 +36,5 @@ class App extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  session: state.session,
-  userStocks: state.userStocks,
-  stock: state.stock,
-  loading: state.loading
-});
 
-const actionCreators = {
-  receiveCurrentUser, 
-  logoutCurrentUser,
-  loadUserStockInfo,
-  switchLoading
-}
-
-export default connect(mapStateToProps, actionCreators)(App);
+export default (App);

@@ -5,37 +5,55 @@ import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { validateEmail } from './componentHelpers'
 import './css/Register.css';
 import axios from 'axios'
 import { connect } from 'react-redux';
-import { receiveCurrentUser, logoutCurrentUser } from '../actions';
+import { receiveCurrentUser } from '../actions';
 
+// this is the login page, it will first make sure the user entered a valid email on their end.
+// it will then check to see if there was a userId in the response from the API, which received
+// a response from the user database. If there was, start a session. If not, output an error
 
 class Login extends React.Component  {
   state = {
     email: '',
-    password: ''
+    password: '',
+    loggedIn: Boolean(localStorage.getItem('userId')),
+    emailError: ''
   }
 
   handleChange = (event) =>  {
     const { name, value } = event.target
-    console.log(name, value)
       this.setState({
         [name]: value
     })
   }
 
   login = () => {
-    console.log(this.state.email)
-    console.log(this.state.password)
+    let validEmail = validateEmail(this.state.email)
+    if (validEmail === false) {
+      this.setState({
+        emailError: 'Please enter a valid email'
+      })
+      return
+    }
     axios.post('api/session/login', {
           email: this.state.email,
           password: this.state.password
     })
     .then(res => {
-       this.props.receiveCurrentUser(res.data)
-       window.location.reload(true)
-     })
+       if (res.data.userId) {
+         this.props.receiveCurrentUser(res.data)
+         localStorage.setItem('userId', res.data.userId)
+         window.location.reload()
+       }
+       else {
+         this.setState({
+           emailError: 'Username or Password incorrect'
+         })
+       }
+    })
   }
 
   render() {
@@ -44,10 +62,12 @@ class Login extends React.Component  {
         <Row>
           <Col sm = {{ span: 6, offset: 3 }}>
             <Card>
+            <h2> Sign In </h2>
               <Card.Body>
                 <Form id = "register-form">
                   
                   <Form.Group controlId="formBasicEmail">
+                  <div style = {{color: 'red'}} >{this.state.emailError}</div>
                     <Form.Label>Email address</Form.Label>
                     <Form.Control 
                       type="email" 
@@ -81,19 +101,14 @@ class Login extends React.Component  {
             </Card>
           </Col>
         </Row>
-        {console.log(this.props)}
       </Container>
     );
   }
 }
 
-const mapStateToProps = state => ({
-  session: state.session
-});
 
 const actionCreators = {
-  receiveCurrentUser, 
-  logoutCurrentUser
+  receiveCurrentUser
 }
 
-export default connect(mapStateToProps, actionCreators)(Login);
+export default connect(null, actionCreators)(Login);
