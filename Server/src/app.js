@@ -4,6 +4,7 @@ const app = express();
 const path = require('path');
 const cors = require('cors');
 const { userRoutes, sessionRoutes, stockRoutes } = require('./routes/index'); 
+const apiRouter = express.Router();
 
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -46,6 +47,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(cors())
 
+app.use('/api', apiRouter);
+
 if(process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, '../../Client/build')));
   app.get('/', function(req, res) {
@@ -53,8 +56,6 @@ if(process.env.NODE_ENV === 'production') {
   });
 }
 
-const apiRouter = express.Router();
-app.use('/api', apiRouter);
 apiRouter.use('/user', userRoutes);
 apiRouter.use('/session', sessionRoutes)
 apiRouter.use('/stocks', stockRoutes)
