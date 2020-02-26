@@ -11,6 +11,8 @@ const session = require('express-session');
 const connectStore = require('connect-mongo');
 const MongoStore = connectStore(session);
 
+console.log(process.env.MONGO, "MONGO")
+
 app.disable('x-powered-by')
 
 mongoose.connect(process.env.MONGO,
@@ -49,12 +51,12 @@ app.use(cors())
 
 app.use('/api', apiRouter);
 
-if(process.env.NODE_ENV === 'production') {
+
   app.use(express.static(path.join(__dirname, '../../Client/build')));
   app.get('*', function(req, res) {
     res.sendFile('index.html', {root: path.join(__dirname, '../../Client/build/')})
   });
-}
+
 
 apiRouter.use('/user', userRoutes);
 apiRouter.use('/session', sessionRoutes)
