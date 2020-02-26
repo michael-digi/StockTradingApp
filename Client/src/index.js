@@ -5,8 +5,6 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from "react-router-dom";
 import configureStore from './store';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { createStore } from "redux";
-import reducers from './reducers';
 import axios from 'axios';
 
   let user;
@@ -14,10 +12,18 @@ import axios from 'axios';
     .then(res => {
       user = {userId: res.data.userId, firstName: res.data.firstName}
       if (user) {
+        axios.get('api/user/findUser', {
+        params: {
+          id:user.userId
+        }
+      }).then(res => {
+        console.log(res)
+
+      })
         let preloadedState = {
           session: user
         }
-      console.log(preloadedState)
+        console.log(preloadedState.session)
       const store = configureStore(preloadedState);
       ReactDOM.render( 
         <Provider store = {store}>

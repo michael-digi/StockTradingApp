@@ -3,6 +3,11 @@
 	margin-bottom: 10%;
 }
 
+#ticker-container {
+  margin-top: 5%;
+  margin-bottom: 10%;
+}
+
 .card {
   padding: 5%;
 }
@@ -20,5 +25,6 @@ html, body, #root {
   height: 100%;
   
 }
+
 
 

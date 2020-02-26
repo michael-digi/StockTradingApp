@@ -1,3 +1,45 @@
 #loginButton {
-	align-content: right;
+background: none;
+border: none;
+font-size: 1.5rem;
+}
+
+#loginButton:hover {
+  color: #42ddf5;
+  transition: .5s;
+}
+
+#loginButton:active {
+	border: #42ddf5 solid 1px;
+}
+
+
+#registerButton {
+background: none;
+border: none;
+font-size: 1.5rem;
+}
+
+#registerButton:hover {
+  color: #42ddf5;
+  transition: .5s;
+}
+
+#registerButton:active {
+	border: #42ddf5 solid 1px;
+}
+
+#logoutButton {
+background: none;
+border: none;
+font-size: 1.5rem;
+}
+
+#logoutButton:hover {
+  color: #42ddf5;
+  transition: .5s;
+}
+
+#logoutButton:active {
+	border: #42ddf5 solid 1px;
 }

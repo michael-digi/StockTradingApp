@@ -19,20 +19,23 @@ class Login extends React.Component  {
 
   handleChange = (event) =>  {
     const { name, value } = event.target
+    console.log(name, value)
       this.setState({
         [name]: value
     })
   }
 
   login = () => {
+    console.log(this.state.email)
+    console.log(this.state.password)
     axios.post('api/session/login', {
           email: this.state.email,
           password: this.state.password
     })
     .then(res => {
        this.props.receiveCurrentUser(res.data)
-       localStorage.setItem('logged in',res.data)}
-       )
+       window.location.reload(true)
+     })
   }
 
   render() {

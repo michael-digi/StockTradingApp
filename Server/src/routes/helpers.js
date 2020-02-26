@@ -9,6 +9,29 @@ checkSession = (req, res) => {
   return res.send(session)
 }
 
+updatePortfolio = async (req, res) => {
+  const { user, transaction, stock, cost } = req.body.entry
+  User.findOne({ _id: user[0] })
+    .then((res) => {
+      res.cash -= cost
+      res.transactions.push(transaction)
+      stockExists = res.stocks.get(stock.ticker)
+      if (stockExists) {
+        res.stocks.set(stock.ticker, parseInt(stockExists) + parseInt(stock.shares))
+      }
+      else {
+        res.stocks.set(stock.ticker, stock.shares)
+      }
+      res.save()
+    })
+  //const doc = await User.findOne({ _id: user[0]})
+  //console.log(await User.stocks.exists({_id: user[0]}))
+  //doc.cash -= cost
+  //doc.cash.toFixed(2)
+  //doc.stocks.set(stock.ticker, stock.shares)
+  //await doc.save()
+}
+
 info = (req, res) => {
   ticker = req.query.ticker
   axios.get(`https://cloud.iexapis.com/stable/stock/${ticker}/quote?token=` + process.env.IEX_SECRET)
@@ -26,16 +49,51 @@ info = (req, res) => {
     .catch(error => res.send("Ticker symbol not found"))
 }
 
+batchInfo = (req, res) => {
+  tickers = req.query.tickers
+  axios.get(`https://cloud.iexapis.com/stable/stock/market/batch?symbols=
+    ${tickers}&types=quote&filter=symbol,companyName,open,close,latestPrice,previousClose
+    &range=1m&last=5&token=` + process.env.IEX_SECRET)
+    .then(response => {
+      let quotes = []
+      for (let i = 0; i < Object.entries(response.data).length; i++){
+        quotes.push(Object.entries(response.data)[i][1].quote)
+      }
+      return res.send(quotes)
+    })
+}
+
+findUser = (req, res) => {
+  console.log(req.query.id, " this is queryid")
+  User.findOne({ _id: req.query.id })
+    .then(user => {
+      if (user) {
+      res.send(user)}
+    })
+}
+
+findUserStocks = (req, res) => {
+  console.log(req.query.id, " this is queryid")
+  User.findOne({ _id: req.query.id })
+    .then(user => {
+      if (user) {
+      res.send(user.stocks)}
+    }).catch(error=> console.log("user doesnt have stocks"))
+}
+
 login = (req, res) => {
   const { email, password } = req.body
+  console.log(email, password, " email and password")
   if (email && password) {
     User.findOne({ email: email })
       .then((user, error) => {
+        console.log(user, " the user")
         if (error || ! user) {
           return res.send("User not found")
         }
         bcrypt.compare(password, user.password)
-          .then((result, error) => {
+        .then((result, error) => {
+            console.log(result, " ", error, " result and error")
             if (result === true) {
               req.session.userId = user._id;
               req.session.firstName = user.firstName
@@ -55,9 +113,6 @@ login = (req, res) => {
 logout = (req, res) => {
   let { userId, firstName, cookie } = req.session
   if (userId, firstName, cookie) {
-    userId = null;
-    firstName = null;
-    cookie = null
     req.session.destroy(err => {
       if (err) {
         return(err)
@@ -114,5 +169,13 @@ registerUser = (req, res) => {
     }
 }
 
-module.exports = {registerUser, logout, login, checkSession, info}
+module.exports = {registerUser, 
+                  logout, 
+                  login, 
+                  checkSession, 
+                  info, 
+                  findUser,
+                  updatePortfolio,
+                  findUserStocks,
+                  batchInfo}
 

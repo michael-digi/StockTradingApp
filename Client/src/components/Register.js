@@ -38,12 +38,6 @@ class Register extends React.Component  {
       })
   }
 
-  testDestroy = () => {
-    console.log("test destroy")
-     axios.get('api/session/logout')
-    .then(res => console.log(res))
-  }
-
   
   register = () => {
       axios.post('api/user/register', {

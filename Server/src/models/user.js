@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
       required: true,
       trim: true
     },
-    balance: {
+    cash: {
       type: Number,
       default: 5000
     },
@@ -28,6 +28,10 @@ const UserSchema = new mongoose.Schema({
     stocks: {
       type: Map,
       default: {}
+    },
+    transactions: {
+      type: Array,
+      default: []
     }
 });
 // authenticate input against database documents
@@ -51,6 +55,7 @@ const UserSchema = new mongoose.Schema({
 //     }
 // hash password before saving to database
 UserSchema.pre('save', function(next) {
+  if (this.isModified('password')){
   const user = this;
   bcrypt.hash(user.password, 10, function(err, hash) {
     if (err) {
@@ -58,7 +63,9 @@ UserSchema.pre('save', function(next) {
     }
     user.password = hash;
     next();
-  })
+  })} else {
+    next()
+  }
 });
 
 const User = mongoose.model('User', UserSchema);

@@ -1,12 +1,17 @@
 import React from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
+import axios from 'axios';
 import { connect } from 'react-redux';
-import { purchaseStock, changeUserStockInfo } from '../actions';
+import { purchaseStock, loadUserStockInfo } from '../actions';
 
 
 
 class BuyModal extends React.Component {
+
+  state = {
+    newStock: false
+  }
 
   reset = () => {
     this.props.purchaseStock({
@@ -26,21 +31,37 @@ class BuyModal extends React.Component {
   }
 
   closeAndConfirm = () => {
-    const { userStocks, stock } = this.props
-    userStocks.cash -= stock.total
-    userStocks.transactions.push(stock)
-    console.log(userStocks, "this is userStocks")
-    console.log(stock, "this is stock")
-    if (stock.ticker in userStocks.stocks) {
-      userStocks.stocks[stock.ticker] += parseInt(stock.shares)
+
+    const { stock } = this.props
+    stock['symbol'] = stock.ticker
+
+    const { userStocks } = this.props
+    const { userId, firstName } = this.props.session
+
+    const today = new Date();
+    const dd = today.getDate();
+    const mm = today.getMonth() + 1;
+    const yyyy = today.getFullYear()
+   
+    const databaseEntry = {
+      user: [userId, firstName],
+      transaction: ['BUY',
+                    stock.ticker, 
+                    stock.shares, 
+                    stock.latestPrice, 
+                    dd + '/' + mm + '/' + yyyy],
+      stock: {ticker: stock.ticker,
+              shares: stock.shares},
+      cost: (stock.shares * stock.latestPrice).toFixed(2)
     }
-    else {
-      userStocks.stocks[stock.ticker] = parseInt(stock.shares)
-    }
-    
-    this.props.changeUserStockInfo({
-      userStocks
+
+    axios.post('/api/user/updateportfolio', {
+        entry: databaseEntry
+    }).then(() => {
+      console.log("success")
     })
+    window.location.reload(true)
+
     this.props.handleClose();
    } 
   
@@ -93,12 +114,13 @@ class BuyModal extends React.Component {
 
 const mapStateToProps = state => ({
   stock: state.stock,
-  userStocks: state.userStocks
+  userStocks: state.userStocks,
+  session: state.session
 })
 
 const dispatch = {
   purchaseStock,
-  changeUserStockInfo
+  loadUserStockInfo
 }
 
 export default connect(mapStateToProps, dispatch)(BuyModal);

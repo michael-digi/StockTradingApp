@@ -3,7 +3,8 @@ import { RECEIVE_CURRENT_USER,
          RECEIVE_ERRORS,
          CLEAR_ERRORS,
          PURCHASE_STOCK,
-         LOAD_USER_STOCK_INFO } from './types';
+         LOAD_USER_STOCK_INFO,
+         SWITCH_LOADING } from './types';
 
 export const receiveErrors =  message  => {
   return {
@@ -38,9 +39,16 @@ export const purchaseStock = stock => {
   }
 }
 
-export const changeUserStockInfo = userStockInfo => {
+export const loadUserStockInfo = userStockInfo => {
   return {
-    type: PURCHASE_STOCK,
+    type: LOAD_USER_STOCK_INFO,
     payload: userStockInfo
+  }
+}
+
+export const switchLoading = loading => {
+  return {
+    type: SWITCH_LOADING,
+    payload: loading
   }
 }

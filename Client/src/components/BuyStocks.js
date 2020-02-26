@@ -7,18 +7,21 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import DataTable from './DataTable';
+import Loading from './Loading';
 import './css/Register.css';
 import axios from 'axios'
 import BuyModal from './BuyModal'
-import { purchaseStock } from '../actions';
+import { purchaseStock, loadUserStockInfo } from '../actions';
 
 
 class BuyStocks extends React.Component {
 
+  
   state = {
     ticker: '',
     shares: '',
     modalShow: false,
+    loading: true
   }
 
   handleClose = () => {
@@ -46,7 +49,6 @@ class BuyStocks extends React.Component {
       }
     })
     .then(res => {
-      console.log(res.data)
       const total = (parseFloat(this.state.shares) * 
                      parseFloat(res.data.latestPrice)).toFixed(2)
       res.data['shares'] = this.state.shares
@@ -68,20 +70,21 @@ class BuyStocks extends React.Component {
 
 	render() {
     return (
-
-      <Container id = "register-container">
-
+    
+      <Container id = "ticker-container">
         <Row>
           <Col sm = {{ span: 8 }}>
             <DataTable />
           </Col>
           <Col sm = {{ span: 3, offset: 1}}>
             <Card>
-            {this.props.userStocks.cash.toFixed(2)}
+            {this.props.userStocks.cash ?
+              this.props.userStocks.cash.toFixed(2) :
+              null}
               <Card.Body>
                 
-                <Form id = "register-form">
-                  <Form.Group controlId="formBasicEmail">
+                <Form id = "ticker-form">
+                  <Form.Group controlId="formBasicText">
                     <Form.Label>Ticker</Form.Label>
                     <Form.Control 
                       type="email" 
@@ -93,7 +96,7 @@ class BuyStocks extends React.Component {
                     </Form.Text>
                   </Form.Group>
 
-                  <Form.Group controlId="formBasicPassword">
+                  <Form.Group controlId="formBasicText">
                     <Form.Label>Shares</Form.Label>
                     <Form.Control 
                       type="text" 
@@ -123,12 +126,15 @@ class BuyStocks extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  session: state.session,
   stock: state.stock,
-  userStocks: state.userStocks
+  userStocks: state.userStocks,
+  loading: state.loading
 })
 
 const actionCreators = {
-  purchaseStock
+  purchaseStock,
+  loadUserStockInfo,
 }
 
 
