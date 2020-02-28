@@ -108,13 +108,9 @@ class DataTable extends React.Component {
     </tbody>
 </table>
 <div style = {{color: 'white'}}>* Note: Open and Close values will not display until
- the market closes for the day.</div>
+ the market closes and results are posted to IEX.</div>
  </div>
     )
   }
 }
-
-
-
 export default (DataTable);
-

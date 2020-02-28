@@ -69,6 +69,13 @@ class BuyStocks extends React.Component {
     this.setState({
       error: ''
     })
+    if (this.state.shares.indexOf('.') !== -1){
+      this.setState({
+        error: 'Please enter a whole number for number of shares'
+      })
+      return
+    }
+    
     axios.get('api/stocks/info', {
       params: {
         ticker: this.state.ticker

@@ -7,8 +7,6 @@ import { purchaseStock,
          // loadUserStockInfo 
        } from '../actions';
 
-
-
 class BuyModal extends React.Component {
 
 //resets the current stock reducer to null if the user cancels

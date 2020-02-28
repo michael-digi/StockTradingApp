@@ -45,8 +45,6 @@ renderRows = () => {
     return rows
   }
 
-  
-
   render() {
     return (
       <Container id = "transaction-container">
@@ -64,8 +62,8 @@ renderRows = () => {
               </thead>
               <tbody>
               {console.log(this.props.userStocks.stocks)}
-      {this.state.loggedIn ?
-      this.renderRows() : null}
+                {this.state.loggedIn ?
+                 this.renderRows() : null}
               </tbody>
             </table>
           </Col>

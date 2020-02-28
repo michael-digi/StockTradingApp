@@ -47,7 +47,7 @@ class Register extends React.Component  {
     }
     if (validPassword === false) {
       this.setState({
-        passwordError: 'Password must be at least 8 characters and contain' +
+        passwordError: 'Password must be 8 - 15 characters and contain' +
                        'at least one letter, one number, and one special character'
       })
       return
