@@ -2,7 +2,7 @@
 
 [The Exchange](https://young-sands-22656.herokuapp.com/login)
 
-This app allows a user to query real-time stock data and look at their portfolio and previous transactions. A user must sign-up before being able to purchase stocks.
+This app allows a user to query real-time stock data and look at their portfolio and previous transactions. **A user must sign-up before being able to purchase stocks.**
 
 ## Motivation
 
