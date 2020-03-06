@@ -12,7 +12,7 @@ The stocks the user "buys" will be stored in their profile on MongoDB and then q
 
 ## Installation
 
-There are two folders in the root: Client and Server. You must cd into EACH folder and type:
+There are two folders in the root: Client and Server. You must cd into EACH folder, each running in a separate terminal and type:
 
 ```bash
 npm install
