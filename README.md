@@ -28,14 +28,14 @@ npm start
 ```
 This will start the react server on port 3000
 
-Then, go into the ROOT StockTradingApp folder and type:
+Then, go into the Server folder and type:
 ```bash
-nodemon start
+npm start
 ```
 
-You can then visit <http://localhost:3000/login> and see the app.
+You can visit <http://localhost:3000/login> and see the app.
 
-NOTE: There are several .env variables present in the app, including the SECRET string to the IEX API and MonogDB database. Therefore, the app will not work as these are necessary for the app to run. You can see the app on Heroku here: 
+NOTE: There are several .env variables present in the app, including the SECRET string to the IEX API and MonogDB database. Therefore, the app will NOT work just from the code posted here, as these are necessary for the app to run. You can see the app on Heroku here: 
 
 [The Exchange](https://young-sands-22656.herokuapp.com/login)
 ## Usage
@@ -48,7 +48,7 @@ SESSION_NAME =
 NODE_ENV = "development"
 IEX_SECRET = ""
 ```
-And then follow the installation instructions above.
+And then follow the installation instructions above. You will need a MongoDB database instance from [MongoDB Atlas](https://www.mongodb.com/cloud/atlas), an API key from  [IEX](https://iexcloud.io/docs/api/), and you will need to generate your own session secret and session name (this uses expression-session)
 ## Technologies
 **FrontEnd**: React, Redux, BootStrap
 
